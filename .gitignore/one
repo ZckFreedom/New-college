@@ -1,0 +1,56 @@
+import os
+import shutil
+import requests
+import webbrowser
+import time
+'''
+path = '/Users/lenovo/Desktop/pycharm'                          #模糊搜索
+files = os.listdir(path)  #展示文件夹内的所有文件的名字
+for f in files:
+	if 'W' in f and f.endswith('.txt'):
+		print('Found it ' + f)
+path2 = '/Users/lenovo/Desktop/pycharm/files'
+filess = os.listdir(path2)
+for t in filess:
+	if (t.endswith('.gif') == False) and ('project30' in t or 'commercial' in t):
+		print(t)
+
+path = '/Users/lenovo/Desktop/pycharm/files'        #文件分类
+files = os.listdir(path)
+for f in files:
+	folder_name = '/Users/lenovo/Desktop/pycharm/files/' + f.split('.')[-1]
+	if os.path.exists(folder_name) == False:
+		os.mkdir(folder_name)
+		shutil.move(f,folder_name)
+	else:
+		shutil.move(f, folder_name)
+
+api = 'https://api.github.com/repos/channelcat/sanic'       #爬取数据
+web_page = 'https://github.com/channelcat/sanic'
+last_update = '2018-09-02T07:46:20Z'
+all_info = requests.get(api).json()
+cur_update = all_info['updated_at']
+while True:
+	if last_update < cur_update:
+		webbrowser.open(web_page)
+	time.sleep(600)
+'''
+api = "https://api.github.com/users/kennethreitz/starred"
+info = requests.get(api).json()
+starred = []
+for i in info:
+	starred.append(i['id'])
+
+while True:
+	info = requests.get(api).json()
+	for i in info:
+		if not i['id'] in starred:
+			starred.append(i['id'])
+			repo_name = i['name']
+			owner = i['owner']['login']
+			web_page = "https://github.com/" + owner + "/" + repo_name
+			webbrowser.open(web_page)
+	time.sleep(600)
+
+
+
