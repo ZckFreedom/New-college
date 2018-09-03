@@ -1,0 +1,131 @@
+import os
+import shutil
+import requests
+import webbrowser
+import time
+from tkinter import *       #调用库中所有文件
+import numpy
+from tkinter.filedialog import *
+from PIL import Image as Img
+
+'''
+path = '/Users/lenovo/Desktop/pycharm'                          #模糊搜索
+files = os.listdir(path)  #展示文件夹内的所有文件的名字
+for f in files:
+	if 'W' in f and f.endswith('.txt'):
+		print('Found it ' + f)
+path2 = '/Users/lenovo/Desktop/pycharm/files'
+filess = os.listdir(path2)
+for t in filess:
+	if (t.endswith('.gif') == False) and ('project30' in t or 'commercial' in t):
+		print(t)
+
+path = '/Users/lenovo/Desktop/pycharm/files'        #文件分类
+files = os.listdir(path)
+for f in files:
+	folder_name = '/Users/lenovo/Desktop/pycharm/files/' + f.split('.')[-1]
+	if os.path.exists(folder_name) == False:
+		os.mkdir(folder_name)
+		shutil.move(f,folder_name)
+	else:
+		shutil.move(f, folder_name)
+
+api = 'https://api.github.com/repos/channelcat/sanic'       #爬取数据
+web_page = 'https://github.com/channelcat/sanic'
+last_update = '2018-09-02T07:46:20Z'
+all_info = requests.get(api).json()         #json可以转变数据使得在python中可以使用
+cur_update = all_info['updated_at']
+while True:
+	if last_update < cur_update:
+		webbrowser.open(web_page)
+	time.sleep(600)
+
+api = "https://api.github.com/users/kennethreitz/starred"
+info = requests.get(api).json()
+starred = []
+for i in info:
+	starred.append(i['id'])
+
+while True:
+	info = requests.get(api).json()
+	for i in info:
+		if not i['id'] in starred:
+			starred.append(i['id'])
+			repo_name = i['name']
+			owner = i['owner']['login']
+			web_page = "https://github.com/" + owner + "/" + repo_name
+			webbrowser.open(web_page)
+	time.sleep(600)
+
+def getnames():                 #对比一些数据库，Django，bottle，flask，sanic都是比较出名的代码库，利用点赞数和分支数和总相关代码数进行比较
+	print('Search each name Space')
+	names = input('shuru:' )
+	return names.split()
+def check_repos(names):
+	repo_api = 'https://api.github.com/search/repositories?q='
+	for name in names:
+		repo_info = requests.get(repo_api + name).json()['items'][0]
+		stars = repo_info['stargazers_count']
+		forks = repo_info['forks_count']
+		ecosys_api = 'https://api.github.com/search/repositories?q=topic:'
+		ecosys_info = requests.get(ecosys_api + name).json()['total_count']
+		print(name)
+		print('Stars: ' + str(stars))
+		print('Forks: ' + str(forks))
+		print('Ecosys: ' + str(ecosys_info))
+		print('-------------')
+names = getnames()
+check_repos(names)
+
+app = Tk()                  #创建app窗口
+lable = Label(width=50,text = 'All first a files',font = ('Hack',25,'bold'),bg='green',fg='blue')             #展示文字标签,调整高度宽度颜色，并且调整文字字体，大小等
+lable.pack()
+# btn = Button(text = 'click me')              #创建按钮
+# btn.pack()                  #展示按钮
+# app.mainloop()              #运行app
+listbox = Listbox(heigh = 12,bg='yellow',fg='red')           #创建小框，定义高度，宽度，背景颜色文字颜色等
+listbox.pack(fill=BOTH,expand=True)
+path = '/Users/lenovo/Desktop/pycharm/files/'
+files = os.listdir(path)
+for f in files:
+	if f.endswith('t') or f.endswith('f'):
+		listbox.insert(END,f)
+app.mainloop()
+
+app = Tk()              #练习，在app界面展示以及安装的第三方库列表
+label = Label(text='Python Packages',font=('Hack',20,'bold'))
+label.pack()
+listbox = Listbox()
+listbox.pack(fill=BOTH,expand=True)
+files = pip.get_installed_distributions()       #获取第三方库的列表
+for f in files:
+	listbox.insert(END, f)
+app.mainloop()
+'''
+info = { 'path':[] }
+def make_app():
+	app = Tk()
+	Label(text = 'Image compress tool').pack()
+	Listbox(name='lbox',bg='#f2f2f2').pack(fill=BOTH,expand=True)
+	Button(text='open',command = dakaitupian).pack()       #command表示执行函数
+	Button(text='compress',command=compress).pack()
+	app.geometry('300x400')
+	return app
+def dakaitupian():
+	filenames = askopenfilenames()
+	lbox = app.children['lbox']
+	info['path'] = filenames
+	if info['path']:
+		for name in filenames:
+			lbox.insert(END,name.split('/')[-1])
+def compress():
+	for f_path in info['path']:
+		# path = "/Users/lenovo/Pictures/abc/121.png"
+		output = '/Users/lenovo/Desktop/pycharm/'
+		name = f_path.split('/')[-1]
+		image = Img.open(f_path)        #打开目标文件
+		image.save(output+'c_'+name,quality = 2)         #将图片降低百分比质量并且存储为指定文件
+
+
+app = make_app()
+app.mainloop()
